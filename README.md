@@ -15,6 +15,7 @@
   <a href="https://github.com/RishikeshSreekumar/amplify/actions/workflows/test.yml"><img alt="Tests" src="https://github.com/RishikeshSreekumar/amplify/actions/workflows/test.yml/badge.svg"></a>
   <img alt="Apple Silicon and Intel" src="https://img.shields.io/badge/Apple%20Silicon%20%26%20Intel-universal-lightgrey">
   <a href="LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-green"></a>
+  <a href="https://buymeacoffee.com/srishi"><img alt="Buy me a coffee" src="https://img.shields.io/badge/Buy%20me%20a%20coffee-BD5FFF?logo=buymeacoffee&logoColor=FFDD00"></a>
 </p>
 
 ---
@@ -176,6 +177,12 @@ tests/run.sh        # both
 
 - **`dsp`** feeds sine waves, square waves and noise through the audio processor and checks the output: exact boost levels, the limiter ceiling, per-app mixing, EQ band gains, voice clarity, virtual bass harmonics, stereo, auto-level, the compressor curve, and that everything maxed out never clips or produces NaNs. Runs in CI on every push.
 - **`e2e`** relaunches Amplify with different settings, plays a test tone and uses two process taps to measure the tone and Amplify's output side by side. The ratio is the real gain through the whole pipeline. Taps read audio before the device volume, so your volume setting doesn't affect the result. The first run asks you to allow System Audio Recording for **Amplify Test**. Your settings are restored afterwards. Set `APP=./Amplify.app` to test a local build.
+
+## Support
+
+Amplify is free. If it saves you from a quiet call or two, you can [buy me a coffee](https://buymeacoffee.com/srishi).
+
+<a href="https://buymeacoffee.com/srishi"><img src="https://img.buymeacoffee.com/button-api/?text=Buy%20me%20a%20coffee&emoji=&slug=srishi&button_colour=BD5FFF&font_colour=ffffff&font_family=Cookie&outline_colour=000000&coffee_colour=FFDD00" alt="Buy me a coffee" height="48"></a>
 
 ## License
 
