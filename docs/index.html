@@ -252,8 +252,15 @@
   .ticket li { padding: 7px 0 7px 28px; position: relative; font-size: 15.5px; }
   .ticket li::before { content: ""; position: absolute; left: 2px; top: 13px; width: 12px; height: 6px; border-left: 2.5px solid var(--pink); border-bottom: 2.5px solid var(--pink); transform: rotate(-45deg); }
   .ticket .btn { width: 100%; justify-content: center; }
-  .btn-coffee { background: var(--orange); color: var(--ink); box-shadow: 0 2px 0 #c97f14; }
-  .btn-coffee:hover { background: #ffbd5e; }
+  /* Buy Me a Coffee widget. Its script writes .bmc-btn in place; these only lay it out. */
+  .cta .btn { height: 60px; padding: 0 24px; }
+  .cta .bmc-btn-container { display: inline-flex; }
+  .bmc-btn { box-shadow: 0 2px 0 #8c3bc9; }
+  .bmc-btn:hover { filter: brightness(1.06); }
+  .ticket .bmc-btn { width: 100%; justify-content: center; }
+  .ticket .bmc-btn-text { width: auto !important; }
+  .bmc-fallback { display: none; }
+  .ticket .bmc-fallback { color: #fff; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.6); }
   .ticket .coffee { color: rgba(255,255,255,.75); font-size: 15px; margin: 0 0 16px; }
   .steps code { overflow-wrap: anywhere; }
   .ticket .alt { display: block; text-align: center; margin-top: 14px; font-size: 14.5px; color: rgba(255,255,255,.75); }
@@ -321,7 +328,7 @@
           <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1v9m0 0L4.5 6.5M8 10l3.5-3.5M2 13.5h12" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
           Download for Mac
         </a>
-        <a class="btn btn-line" href="https://buymeacoffee.com/srishi"><svg width="17" height="17" viewBox="0 0 17 17" aria-hidden="true"><path d="M2.5 6h9v4.5a4 4 0 0 1-4 4h-1a4 4 0 0 1-4-4zM11.5 7.5h1.2a2 2 0 0 1 0 4h-1.4M5 1.5v2M8 1.5v2" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Buy me a coffee</a>
+        <a class="btn btn-line" id="bmcHero" href="https://buymeacoffee.com/srishi">Buy me a coffee</a>
       </div>
       <p class="fine"><b>Free.</b> No trial, no ads, no account. <a href="https://github.com/RishikeshSreekumar/amplify">Open source</a>.<br>macOS 14.2 or later. Apple Silicon and Intel.</p>
     </div>
@@ -454,7 +461,10 @@
       <a class="btn btn-pink" href="https://github.com/RishikeshSreekumar/amplify/releases/latest">Download Amplify</a>
       <div class="perf"></div>
       <p class="coffee">If Amplify rescued a quiet call or two, you can say thanks with a coffee. Totally optional, always appreciated.</p>
-      <a class="btn btn-coffee" href="https://buymeacoffee.com/srishi"><svg width="17" height="17" viewBox="0 0 17 17" aria-hidden="true"><path d="M2.5 6h9v4.5a4 4 0 0 1-4 4h-1a4 4 0 0 1-4-4zM11.5 7.5h1.2a2 2 0 0 1 0 4h-1.4M5 1.5v2M8 1.5v2" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Buy me a coffee</a>
+      <div class="bmc-slot">
+        <script type="text/javascript" src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" data-name="bmc-button" data-slug="srishi" data-color="#BD5FFF" data-emoji="" data-font="Cookie" data-text="Buy me a coffee" data-outline-color="#000000" data-font-color="#ffffff" data-coffee-color="#FFDD00"></script>
+        <a class="btn btn-line bmc-fallback" href="https://buymeacoffee.com/srishi">Buy me a coffee</a>
+      </div>
     </div>
   </div>
 </section>
@@ -508,6 +518,17 @@
 </footer>
 
 <script>
+  // The widget script above renders the official button in the price card.
+  // Reuse it for the hero button. If it was blocked, show plain links instead.
+  if (window.bmcBtnWidget) {
+    const slot = document.getElementById("bmcHero");
+    const tpl = document.createElement("span");
+    tpl.innerHTML = bmcBtnWidget("Buy me a coffee", "srishi", "#BD5FFF", "", "Cookie", "#ffffff", "#000000", "#FFDD00");
+    slot.replaceWith(...tpl.childNodes);
+  } else {
+    document.querySelectorAll(".bmc-fallback").forEach(a => a.style.display = "inline-flex");
+  }
+
   // Clock in the fake menu bar
   (function () {
     const d = new Date();
