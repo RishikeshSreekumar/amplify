@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Amplify, louder than 100% on your Mac</title>
-<meta name="description" content="Amplify is a menu bar app that boosts your Mac's volume up to 300%, with sound effects, a 10-band EQ and a per-app mixer. Try it free for 7 days, then pay once.">
+<meta name="description" content="Amplify is a menu bar app that boosts your Mac's volume up to 300%, with sound effects, a 10-band EQ and a per-app mixer. Free and open source.">
 <link rel="icon" href="icon.png">
 <meta property="og:title" content="Amplify">
 <meta property="og:description" content="Your Mac's volume stops at 100%. Amplify keeps going.">
@@ -252,6 +252,10 @@
   .ticket li { padding: 7px 0 7px 28px; position: relative; font-size: 15.5px; }
   .ticket li::before { content: ""; position: absolute; left: 2px; top: 13px; width: 12px; height: 6px; border-left: 2.5px solid var(--pink); border-bottom: 2.5px solid var(--pink); transform: rotate(-45deg); }
   .ticket .btn { width: 100%; justify-content: center; }
+  .btn-coffee { background: var(--orange); color: var(--ink); box-shadow: 0 2px 0 #c97f14; }
+  .btn-coffee:hover { background: #ffbd5e; }
+  .ticket .coffee { color: rgba(255,255,255,.75); font-size: 15px; margin: 0 0 16px; }
+  .steps code { overflow-wrap: anywhere; }
   .ticket .alt { display: block; text-align: center; margin-top: 14px; font-size: 14.5px; color: rgba(255,255,255,.75); }
 
   /* faq */
@@ -302,9 +306,9 @@
     <a class="brand" href="#"><img src="icon.png" alt=""><b>Ampli<span>fy</span></b></a>
     <nav>
       <a href="#features">Features</a>
-      <a href="#pricing">Pricing</a>
       <a href="#faq">FAQ</a>
-      <a class="pill" href="#pricing">Try it free</a>
+      <a href="https://buymeacoffee.com/srishi">Buy me a coffee</a>
+      <a class="pill" href="#download">Download</a>
     </nav>
   </header>
 
@@ -313,13 +317,13 @@
       <h1>Your Mac's volume stops at 100%. <span class="pink">Amplify <span class="go">keeps going.<svg viewBox="0 0 300 20" preserveAspectRatio="none" aria-hidden="true"><path d="M3 12 C 60 4, 120 16, 180 9 S 270 6, 297 11" fill="none" stroke="#ffad3b" stroke-width="5" stroke-linecap="round"/></svg></span></span></h1>
       <p class="lede">A tiny menu bar app that takes your whole Mac from <s>100%</s> to 300%. For the quiet Zoom call, the YouTube video mixed at a whisper, and the podcast someone recorded in a stairwell.</p>
       <div class="cta">
-        <a class="btn btn-ink" href="#pricing" data-download>
+        <a class="btn btn-ink" href="https://github.com/RishikeshSreekumar/amplify/releases/latest">
           <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1v9m0 0L4.5 6.5M8 10l3.5-3.5M2 13.5h12" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Download free trial
+          Download for Mac
         </a>
-        <a class="btn btn-line" href="#pricing" data-buy><span>Buy for <span class="price-text">$12</span></span></a>
+        <a class="btn btn-line" href="https://buymeacoffee.com/srishi"><svg width="17" height="17" viewBox="0 0 17 17" aria-hidden="true"><path d="M2.5 6h9v4.5a4 4 0 0 1-4 4h-1a4 4 0 0 1-4-4zM11.5 7.5h1.2a2 2 0 0 1 0 4h-1.4M5 1.5v2M8 1.5v2" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Buy me a coffee</a>
       </div>
-      <p class="fine"><b>7 days free</b>, no card, no account. Then <span class="price-text">$12</span> once.<br>macOS 14.2 or later. Apple Silicon and Intel.</p>
+      <p class="fine"><b>Free.</b> No trial, no ads, no account. <a href="https://github.com/RishikeshSreekumar/amplify">Open source</a>.<br>macOS 14.2 or later. Apple Silicon and Intel.</p>
     </div>
 
     <div class="desk" aria-label="Interactive preview of the Amplify panel">
@@ -423,32 +427,34 @@
   </div>
 </section>
 
-<section id="pricing">
+<section id="download">
   <div class="wrap price-wrap">
     <div>
-      <p class="kicker">PRICING</p>
-      <h2>Pay once.<br>Keep it.</h2>
-      <p class="intro">No subscription. Volume shouldn't be a monthly bill.</p>
+      <p class="kicker">PRICE</p>
+      <h2>Free.<br>Properly free.</h2>
+      <p class="intro">No trial, no ads, no account, no Pro version. Everything on this page is in the download, and the code is on GitHub.</p>
       <ol class="steps">
-        <li><b>Download and use everything for 7 days.</b><span>Every feature is on during the trial. No card, no sign-up.</span></li>
-        <li><b>Decide if you'd miss it.</b><span>If your speakers sound fine without it, just drag it to the Bin.</span></li>
-        <li><b>Buy a license and paste in the key.</b><span>It's yours from then on.</span></li>
+        <li><b>Install with Homebrew.</b><span><code>brew install --cask rishikeshsreekumar/tap/amplify</code></span></li>
+        <li><b>Or download the app.</b><span>Open the .dmg and drag Amplify to Applications. The first time, macOS asks you to confirm because the app isn't notarized yet. Click Open Anyway in System Settings, under Privacy &amp; Security.</span></li>
+        <li><b>Turn it on.</b><span>Allow System Audio Recording when macOS asks, then look for the speaker in your menu bar.</span></li>
       </ol>
     </div>
 
     <div class="ticket">
-      <div class="price"><sup>$</sup><span id="priceBig">12</span></div>
-      <div class="price-sub">one time. <b>7-day free trial</b> first.</div>
+      <div class="price"><sup>$</sup><span>0</span></div>
+      <div class="price-sub">forever. <b>Every feature</b> included.</div>
       <div class="perf"></div>
       <ul>
         <li>Boost up to 300%, system-wide</li>
         <li>Per-app mixer, all seven effects and the 10-band EQ</li>
         <li>Volume keys past 100%</li>
-        <li>All future 2.x updates</li>
-        <li>No subscription, no account</li>
+        <li>Every future update</li>
+        <li>Open source, MIT license</li>
       </ul>
-      <a class="btn btn-pink" href="#" data-buy><span>Buy Amplify for <span class="price-text">$12</span></span></a>
-      <a class="alt" href="#" data-download>or download the free trial</a>
+      <a class="btn btn-pink" href="https://github.com/RishikeshSreekumar/amplify/releases/latest">Download Amplify</a>
+      <div class="perf"></div>
+      <p class="coffee">If Amplify rescued a quiet call or two, you can say thanks with a coffee. Totally optional, always appreciated.</p>
+      <a class="btn btn-coffee" href="https://buymeacoffee.com/srishi"><svg width="17" height="17" viewBox="0 0 17 17" aria-hidden="true"><path d="M2.5 6h9v4.5a4 4 0 0 1-4 4h-1a4 4 0 0 1-4-4zM11.5 7.5h1.2a2 2 0 0 1 0 4h-1.4M5 1.5v2M8 1.5v2" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Buy me a coffee</a>
     </div>
   </div>
 </section>
@@ -459,8 +465,8 @@
     <h2>Questions people ask</h2>
     <div class="faq">
       <details>
-        <summary>What happens when the 7 days are up?</summary>
-        <p>The boost switches off and Amplify asks for a license key. Your settings, EQ curve and per-app levels stay where you left them, so buying picks up right where the trial ended.</p>
+        <summary>Is it really free?</summary>
+        <p>Yes. No trial, no ads, no tracking and no in-app purchases. The source code is on <a href="https://github.com/RishikeshSreekumar/amplify">GitHub</a> under the MIT license, so you can read it or build it yourself. If you'd like to chip in, there's a <a href="https://buymeacoffee.com/srishi">Buy Me a Coffee page</a>.</p>
       </details>
       <details>
         <summary>Will it damage my speakers?</summary>
@@ -484,7 +490,11 @@
       </details>
       <details>
         <summary>Can I install it with Homebrew?</summary>
-        <p>Yes. Run <code>brew install --cask rishikeshsreekumar/tap/amplify</code> and the trial starts the first time you open it.</p>
+        <p>Yes. Run <code>brew install --cask rishikeshsreekumar/tap/amplify</code>. Update later with <code>brew upgrade --cask amplify</code>.</p>
+      </details>
+      <details>
+        <summary>macOS says it "can't verify" Amplify. Is that normal?</summary>
+        <p>Yes. Amplify isn't notarized with a paid Apple Developer certificate yet, so macOS asks once. Open System Settings, go to Privacy &amp; Security and click Open Anyway. Or run <code>xattr -dr com.apple.quarantine /Applications/Amplify.app</code> in Terminal. Homebrew installs skip this step.</p>
       </details>
     </div>
   </div>
@@ -492,22 +502,12 @@
 
 <footer>
   <div class="wrap">
-    <span>Amplify 2.0. Made by Rishikesh Sreekumar.</span>
-    <span><a href="https://github.com/RishikeshSreekumar/amplify">GitHub</a> &nbsp;·&nbsp; <a href="https://github.com/RishikeshSreekumar/amplify/releases">Release notes</a></span>
+    <span>Amplify 2.0. Free, made by Rishikesh Sreekumar.</span>
+    <span><a href="https://github.com/RishikeshSreekumar/amplify">GitHub</a> &nbsp;·&nbsp; <a href="https://github.com/RishikeshSreekumar/amplify/releases">Release notes</a> &nbsp;·&nbsp; <a href="https://buymeacoffee.com/srishi">Buy me a coffee</a></span>
   </div>
 </footer>
 
 <script>
-  // Edit these three when the checkout is set up.
-  const PRICE = 12;
-  const CHECKOUT_URL = "#pricing";
-  const DOWNLOAD_URL = "https://github.com/RishikeshSreekumar/amplify/releases/latest";
-
-  document.querySelectorAll(".price-text").forEach(el => el.textContent = "$" + PRICE);
-  document.getElementById("priceBig").textContent = PRICE;
-  document.querySelectorAll("[data-buy]").forEach(a => a.href = CHECKOUT_URL);
-  document.querySelectorAll("[data-download]").forEach(a => a.href = DOWNLOAD_URL);
-
   // Clock in the fake menu bar
   (function () {
     const d = new Date();
