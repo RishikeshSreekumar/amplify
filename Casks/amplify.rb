@@ -1,6 +1,6 @@
 cask "amplify" do
-  version "1.0"
-  sha256 "236d116a76b1d1d23906cc05b464552cb9061cb07f32db3489602cf21a7bfbbb"
+  version "2.0"
+  sha256 "7801bd2510257fb8b8c494a9b5d9d1fde1ff976eaf60ba2872869532b7d70a84"
 
   url "https://github.com/RishikeshSreekumar/amplify/releases/download/v#{version}/Amplify-#{version}.zip"
   name "Amplify"
