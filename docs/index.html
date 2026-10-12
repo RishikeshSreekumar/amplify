@@ -1,0 +1,672 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Amplify, louder than 100% on your Mac</title>
+<meta name="description" content="Amplify is a menu bar app that boosts your Mac's volume up to 300%, with sound effects, a 10-band EQ and a per-app mixer. Try it free for 7 days, then pay once.">
+<link rel="icon" href="icon.png">
+<meta property="og:title" content="Amplify">
+<meta property="og:description" content="Your Mac's volume stops at 100%. Amplify keeps going.">
+<meta property="og:image" content="icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f5f1ea;
+    --paper-2: #ece6db;
+    --ink: #1f1852;
+    --ink-2: #4a4570;
+    --muted: #7d7896;
+    --line: rgba(31, 24, 82, .13);
+    --pink: #ff3e7f;
+    --orange: #ffad3b;
+    --panel: #fbfbfd;
+    --mac-blue: #0a84ff;
+    --round: ui-rounded, "SF Pro Rounded", "Nunito", system-ui, sans-serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font: 17px/1.55 var(--sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+  .num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+  /* top bar */
+  .top {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 22px 0;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font: 900 22px/1 var(--round); letter-spacing: -.01em; }
+  .brand img { width: 34px; height: 34px; }
+  .brand b { font-weight: inherit; }
+  .brand span { color: var(--pink); }
+  .top nav { display: flex; align-items: center; gap: 26px; font-size: 15px; }
+  .top nav a { text-decoration: none; color: var(--ink-2); }
+  .top nav a:hover { color: var(--ink); }
+  .top nav .pill { color: var(--ink); border: 1.5px solid var(--ink); padding: 7px 14px; border-radius: 999px; font-weight: 600; }
+  .top nav .pill:hover { background: var(--ink); color: var(--paper); }
+
+  /* buttons */
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    font: 600 16px/1 var(--sans); text-decoration: none;
+    padding: 15px 22px; border-radius: 12px; border: 0; cursor: pointer;
+  }
+  .btn-ink { background: var(--ink); color: #fff; box-shadow: 0 2px 0 #0d0930; }
+  .btn-ink:hover { background: #2b2370; }
+  .btn-line { color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--ink); }
+  .btn-line:hover { background: rgba(31,24,82,.06); }
+  .btn-pink { background: var(--pink); color: #fff; box-shadow: 0 2px 0 #c4245b; }
+  .btn-pink:hover { background: #ff5790; }
+
+  /* hero */
+  .hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 56px; align-items: center; padding: 40px 0 96px; }
+  h1 {
+    font: 900 clamp(42px, 5.6vw, 68px)/1 var(--round);
+    letter-spacing: -.025em; margin: 0 0 26px;
+  }
+  h1 .pink { color: var(--pink); }
+  h1 .go { position: relative; white-space: nowrap; }
+  h1 .go svg { position: absolute; left: -2%; bottom: -.2em; width: 104%; height: .32em; overflow: visible; }
+  .lede { font-size: 20px; color: var(--ink-2); max-width: 30em; margin: 0 0 32px; }
+  .lede s { text-decoration-color: var(--pink); text-decoration-thickness: 2px; }
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 22px; }
+  .fine { font-size: 14px; color: var(--muted); }
+  .fine b { color: var(--ink-2); font-weight: 600; }
+
+  /* the fake desktop */
+  .desk {
+    position: relative; border-radius: 18px; overflow: hidden;
+    background:
+      radial-gradient(120% 90% at 85% 10%, #6b2a6e 0%, transparent 55%),
+      radial-gradient(90% 80% at 0% 100%, #2c2370 0%, transparent 60%),
+      #1d1747;
+    min-height: 600px;
+    box-shadow: 0 30px 60px -30px rgba(31,24,82,.55), 0 0 0 1px rgba(31,24,82,.2);
+  }
+  .menubar {
+    height: 30px; display: flex; align-items: center; justify-content: flex-end; gap: 16px;
+    padding: 0 14px; font-size: 13px; color: #fff;
+    background: rgba(255,255,255,.14); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  }
+  .menubar .left { margin-right: auto; display: flex; gap: 18px; opacity: .9; }
+  .menubar .left b { font-weight: 700; }
+  .mb-amp {
+    display: flex; align-items: center; gap: 5px; padding: 2px 7px; border-radius: 5px;
+    background: rgba(255,255,255,.22); font-variant-numeric: tabular-nums; font-weight: 500;
+  }
+  .mb-amp.off { background: transparent; opacity: .45; }
+  .mb-amp svg { width: 16px; height: 14px; }
+  .mb-icon { width: 15px; height: 12px; opacity: .9; }
+
+  .panel {
+    position: absolute; top: 38px; right: 14px; width: min(340px, calc(100% - 28px));
+    background: var(--panel); color: #1d1d1f; border-radius: 12px; padding: 14px;
+    font: 13px/1.35 var(--sans);
+    box-shadow: 0 0 0 .5px rgba(0,0,0,.25), 0 18px 40px rgba(0,0,0,.4);
+  }
+  .p-head { display: flex; align-items: center; gap: 10px; }
+  .p-head img { width: 30px; height: 30px; }
+  .p-head .t { font-weight: 700; font-size: 13.5px; }
+  .p-head .s { color: #86868b; font-size: 11.5px; }
+  .switch {
+    margin-left: auto; width: 38px; height: 22px; border-radius: 11px; border: 0; padding: 0; cursor: pointer;
+    background: #d4d4d8; position: relative; transition: background .18s;
+  }
+  .switch::after {
+    content: ""; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 50%;
+    background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.3); transition: transform .18s;
+  }
+  .switch[aria-checked="true"] { background: var(--mac-blue); }
+  .switch[aria-checked="true"]::after { transform: translateX(16px); }
+  .switch.sm { width: 30px; height: 18px; }
+  .switch.sm::after { width: 14px; height: 14px; }
+  .switch.sm[aria-checked="true"]::after { transform: translateX(12px); }
+
+  .meters { margin: 12px 0; display: grid; gap: 6px; }
+  .meter { display: grid; grid-template-columns: 34px 1fr; align-items: center; gap: 8px; font-size: 10.5px; color: #86868b; }
+  .meter .bar { height: 6px; border-radius: 3px; background: rgba(0,0,0,.08); overflow: hidden; }
+  .meter .fill { height: 100%; width: 0; border-radius: 3px; background: linear-gradient(90deg, #34c759 0%, #34c759 65%, #ffcc00 85%, #ff3b30 100%); background-size: 260px 100%; transition: width .08s linear; }
+  .lim { display: flex; justify-content: space-between; font-size: 10.5px; color: #86868b; padding-left: 42px; }
+
+  .boost-row { display: flex; justify-content: space-between; margin-bottom: 6px; }
+  .boost-row b { font-variant-numeric: tabular-nums; }
+  input[type=range] { width: 100%; margin: 0; accent-color: var(--mac-blue); }
+  .range {
+    -webkit-appearance: none; appearance: none; height: 20px; background: transparent; cursor: pointer;
+  }
+  .range::-webkit-slider-runnable-track { height: 4px; border-radius: 2px; background: linear-gradient(90deg, var(--mac-blue) var(--p, 50%), rgba(0,0,0,.12) var(--p, 50%)); }
+  .range::-moz-range-track { height: 4px; border-radius: 2px; background: linear-gradient(90deg, var(--mac-blue) var(--p, 50%), rgba(0,0,0,.12) var(--p, 50%)); }
+  .range::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; margin-top: -7px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 .5px rgba(0,0,0,.2), 0 1px 3px rgba(0,0,0,.3); }
+  .range::-moz-range-thumb { width: 18px; height: 18px; border: 0; border-radius: 50%; background: #fff; box-shadow: 0 0 0 .5px rgba(0,0,0,.2), 0 1px 3px rgba(0,0,0,.3); }
+  .presets { display: flex; gap: 6px; margin-top: 8px; }
+  .presets button {
+    flex: 1; border: 0; border-radius: 6px; padding: 5px 0; font: 500 11.5px var(--sans); cursor: pointer;
+    background: rgba(0,0,0,.07); color: #1d1d1f;
+  }
+  .presets button.on { background: var(--mac-blue); color: #fff; }
+  .p-sec { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-top: .5px solid rgba(0,0,0,.12); font-weight: 600; font-size: 12.5px; }
+  .p-sec:first-of-type { margin-top: 12px; }
+  .p-sec i { font-style: normal; color: #86868b; font-weight: 600; }
+  .p-foot { display: flex; justify-content: space-between; align-items: center; border-top: .5px solid rgba(0,0,0,.12); padding-top: 10px; color: #86868b; font-size: 11.5px; }
+  .p-foot span:last-child { color: #1d1d1f; background: rgba(0,0,0,.07); border-radius: 5px; padding: 2px 9px; }
+
+  .desk-note {
+    position: absolute; left: 18px; bottom: 16px; max-width: 46%;
+    color: rgba(255,255,255,.72); font-size: 13px; line-height: 1.4;
+  }
+  .desk-note svg { display: block; width: 46px; height: 34px; margin: 0 0 4px 60%; }
+
+  /* sections */
+  section { padding: 96px 0; border-top: 1px solid var(--line); }
+  .kicker { font: 600 13px/1 var(--mono); letter-spacing: .04em; color: var(--pink); margin: 0 0 18px; }
+  h2 { font: 900 clamp(34px, 4.4vw, 52px)/1.02 var(--round); letter-spacing: -.02em; margin: 0 0 20px; }
+  h3 { font: 800 24px/1.15 var(--round); letter-spacing: -.01em; margin: 0 0 10px; }
+  .intro { font-size: 19px; color: var(--ink-2); max-width: 34em; margin: 0; }
+
+  .feature { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 64px; align-items: center; padding: 72px 0 0; }
+  .feature.flip > :first-child { order: 2; }
+  .feature p { color: var(--ink-2); margin: 0 0 14px; }
+  .feature .note { font-size: 14px; color: var(--muted); }
+
+  .card {
+    background: #fff; border-radius: 16px; padding: 22px;
+    box-shadow: 0 0 0 1px var(--line), 0 12px 30px -18px rgba(31,24,82,.35);
+  }
+
+  /* mixer */
+  .mix-row { display: grid; grid-template-columns: 30px 82px 1fr 52px; gap: 12px; align-items: center; padding: 11px 0; }
+  .mix-row + .mix-row { border-top: 1px solid var(--line); }
+  .app-ic { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; color: #fff; font: 800 14px var(--round); }
+  .mix-row .name { font-weight: 600; font-size: 15px; }
+  .mix-row output { text-align: right; font: 600 14px var(--mono); }
+  .mix-row output.hot { color: var(--pink); }
+  .mix-row output.mute { color: var(--muted); }
+
+  /* effects */
+  .fx { list-style: none; margin: 0; padding: 0; }
+  .fx li { display: grid; grid-template-columns: 1fr auto; gap: 4px 16px; align-items: center; padding: 14px 0; border-top: 1px solid var(--line); }
+  .fx li:first-child { border-top: 0; padding-top: 0; }
+  .fx b { font-size: 16px; }
+  .fx span { grid-column: 1; font-size: 14.5px; color: var(--ink-2); }
+  .fx .switch { grid-row: 1 / span 2; grid-column: 2; }
+
+  /* eq */
+  .eq-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 22px; }
+  .eq-tabs button {
+    border: 0; border-radius: 999px; padding: 7px 13px; font: 600 13px var(--sans); cursor: pointer;
+    background: var(--paper); color: var(--ink-2);
+  }
+  .eq-tabs button.on { background: var(--ink); color: #fff; }
+  .eq { display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px; height: 190px; position: relative; }
+  .eq::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; border-top: 1px dashed var(--line); }
+  .band { position: relative; cursor: ns-resize; touch-action: none; }
+  .band .stem { position: absolute; left: 50%; width: 6px; margin-left: -3px; border-radius: 3px; background: var(--pink); transition: top .35s cubic-bezier(.3,.7,.2,1), height .35s cubic-bezier(.3,.7,.2,1); }
+  .band .knob { position: absolute; left: 50%; width: 16px; height: 16px; margin: -8px 0 0 -8px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 2px var(--ink); transition: top .35s cubic-bezier(.3,.7,.2,1); }
+  .band.drag .stem, .band.drag .knob { transition: none; }
+  .eq-labels { display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px; margin-top: 10px; text-align: center; font: 500 11.5px var(--mono); color: var(--muted); }
+  .eq-db { display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px; margin-bottom: 8px; text-align: center; font: 500 11px var(--mono); color: var(--ink-2); }
+
+  /* small things */
+  .smalls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 40px; margin-top: 56px; }
+  .small { padding: 26px 0; border-top: 1.5px solid var(--ink); }
+  .small .n { font: 600 12px var(--mono); color: var(--pink); display: block; margin-bottom: 10px; }
+  .small h4 { font: 800 19px/1.2 var(--round); margin: 0 0 8px; }
+  .small p { margin: 0; font-size: 15px; color: var(--ink-2); }
+  kbd { font: 600 12px var(--mono); background: #fff; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 5px; padding: 1px 6px; }
+
+  /* pricing */
+  .price-wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 64px; align-items: start; margin-top: 8px; }
+  .steps { list-style: none; padding: 0; margin: 28px 0 0; counter-reset: s; }
+  .steps li { counter-increment: s; position: relative; padding: 0 0 22px 52px; }
+  .steps li::before {
+    content: counter(s); position: absolute; left: 0; top: -2px; width: 34px; height: 34px; border-radius: 50%;
+    display: grid; place-items: center; font: 800 16px var(--round); border: 1.5px solid var(--ink);
+  }
+  .steps b { display: block; font-size: 17px; }
+  .steps span { color: var(--ink-2); font-size: 15.5px; }
+  .ticket {
+    background: var(--ink); color: #fff; border-radius: 20px; padding: 34px 34px 30px; position: relative;
+  }
+  .ticket::before, .ticket::after {
+    content: ""; position: absolute; top: 142px; width: 26px; height: 26px; border-radius: 50%; background: var(--paper);
+  }
+  .ticket::before { left: -13px; } .ticket::after { right: -13px; }
+  .ticket .perf { border-top: 2px dashed rgba(255,255,255,.22); margin: 26px -6px 24px; }
+  .price { display: flex; align-items: flex-start; gap: 4px; font: 900 92px/.9 var(--round); letter-spacing: -.03em; }
+  .price sup { font-size: 38px; margin-top: 8px; }
+  .price-sub { color: rgba(255,255,255,.7); font-size: 16px; margin-top: 10px; }
+  .price-sub b { color: var(--orange); font-weight: 700; }
+  .ticket ul { list-style: none; margin: 0 0 28px; padding: 0; }
+  .ticket li { padding: 7px 0 7px 28px; position: relative; font-size: 15.5px; }
+  .ticket li::before { content: ""; position: absolute; left: 2px; top: 13px; width: 12px; height: 6px; border-left: 2.5px solid var(--pink); border-bottom: 2.5px solid var(--pink); transform: rotate(-45deg); }
+  .ticket .btn { width: 100%; justify-content: center; }
+  .ticket .alt { display: block; text-align: center; margin-top: 14px; font-size: 14.5px; color: rgba(255,255,255,.75); }
+
+  /* faq */
+  .faq { margin-top: 40px; max-width: 760px; }
+  details { border-top: 1px solid var(--line); }
+  details:last-child { border-bottom: 1px solid var(--line); }
+  summary { cursor: pointer; list-style: none; padding: 20px 40px 20px 0; position: relative; font-weight: 600; font-size: 18px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; position: absolute; right: 4px; top: 14px; font: 400 28px var(--round); color: var(--pink); transition: transform .2s; }
+  details[open] summary::after { transform: rotate(45deg); }
+  details p { margin: 0 0 22px; color: var(--ink-2); max-width: 40em; }
+  code { font: 13.5px var(--mono); background: var(--paper-2); padding: 2px 6px; border-radius: 5px; }
+
+  footer { border-top: 1px solid var(--line); padding: 36px 0 56px; font-size: 14px; color: var(--muted); }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: center; }
+  footer a { color: var(--ink-2); }
+
+  @media (max-width: 880px) {
+    .hero, .feature, .price-wrap { grid-template-columns: 1fr; gap: 40px; }
+    .feature.flip > :first-child { order: 0; }
+    .smalls { grid-template-columns: 1fr 1fr; }
+    .hero { padding-bottom: 72px; }
+    section { padding: 72px 0; }
+    .feature { padding-top: 56px; }
+  }
+  @media (max-width: 600px) {
+    .wrap { padding: 0 16px; }
+    .top nav a:not(.pill) { display: none; }
+    .smalls { grid-template-columns: 1fr; }
+    .desk { min-height: 0; height: 540px; }
+    #clock { display: none; }
+    .desk-note { display: none; }
+    .menubar .left span { display: none; }
+    .mix-row { grid-template-columns: 30px 64px 1fr 46px; gap: 10px; }
+    .ticket { padding: 28px 22px 24px; }
+    .price { font-size: 76px; }
+    .lede { font-size: 18px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="#"><img src="icon.png" alt=""><b>Ampli<span>fy</span></b></a>
+    <nav>
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+      <a class="pill" href="#pricing">Try it free</a>
+    </nav>
+  </header>
+
+  <main class="hero">
+    <div>
+      <h1>Your Mac's volume stops at 100%. <span class="pink">Amplify <span class="go">keeps going.<svg viewBox="0 0 300 20" preserveAspectRatio="none" aria-hidden="true"><path d="M3 12 C 60 4, 120 16, 180 9 S 270 6, 297 11" fill="none" stroke="#ffad3b" stroke-width="5" stroke-linecap="round"/></svg></span></span></h1>
+      <p class="lede">A tiny menu bar app that takes your whole Mac from <s>100%</s> to 300%. For the quiet Zoom call, the YouTube video mixed at a whisper, and the podcast someone recorded in a stairwell.</p>
+      <div class="cta">
+        <a class="btn btn-ink" href="#pricing" data-download>
+          <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1v9m0 0L4.5 6.5M8 10l3.5-3.5M2 13.5h12" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Download free trial
+        </a>
+        <a class="btn btn-line" href="#pricing" data-buy><span>Buy for <span class="price-text">$12</span></span></a>
+      </div>
+      <p class="fine"><b>7 days free</b>, no card, no account. Then <span class="price-text">$12</span> once.<br>macOS 14.2 or later. Apple Silicon and Intel.</p>
+    </div>
+
+    <div class="desk" aria-label="Interactive preview of the Amplify panel">
+      <div class="menubar">
+        <div class="left"><b>Finder</b><span>File</span><span>Edit</span><span>View</span></div>
+        <div class="mb-amp" id="mbAmp">
+          <svg viewBox="0 0 16 14" aria-hidden="true"><path d="M1 5h3l4-3.5v11L4 9H1z" fill="#fff"/><path d="M10.5 4.5a3.5 3.5 0 0 1 0 5M12.5 2.5a6.3 6.3 0 0 1 0 9" stroke="#fff" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>
+          <span id="mbPct">180%</span>
+        </div>
+        <svg class="mb-icon" viewBox="0 0 15 12" aria-hidden="true"><path d="M1 4.2a9.4 9.4 0 0 1 13 0M3.3 6.6a6 6 0 0 1 8.4 0M5.6 9a2.6 2.6 0 0 1 3.8 0" stroke="#fff" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+        <span id="clock">Mon 12 Oct 9:41</span>
+      </div>
+
+      <div class="panel">
+        <div class="p-head">
+          <img src="icon.png" alt="">
+          <div><div class="t">Amplify</div><div class="s">MacBook Pro Speakers</div></div>
+          <button class="switch" role="switch" aria-checked="true" aria-label="Amplify on" id="power"></button>
+        </div>
+        <div class="meters">
+          <div class="meter">In<div class="bar"><div class="fill" id="mIn"></div></div></div>
+          <div class="meter">Out<div class="bar"><div class="fill" id="mOut"></div></div></div>
+          <div class="lim"><span>Limiter</span><span id="limText" class="num">-0.0 dB</span></div>
+        </div>
+        <div class="boost-row"><span>Boost</span><b id="pct">180%</b></div>
+        <input class="range" id="boost" type="range" min="100" max="300" step="5" value="180" aria-label="Boost">
+        <div class="presets" id="presets">
+          <button>125%</button><button>150%</button><button>200%</button><button>250%</button><button>300%</button>
+        </div>
+        <div class="p-sec">Effects <i>›</i></div>
+        <div class="p-sec">Equalizer <i>›</i></div>
+        <div class="p-sec">Apps <i>›</i></div>
+        <div class="p-sec">Settings <i>›</i></div>
+        <div class="p-foot"><span>Amplify 2.0</span><span>Quit</span></div>
+      </div>
+
+      <div class="desk-note">
+        <svg viewBox="0 0 46 34" aria-hidden="true"><path d="M4 30 C 10 12, 26 6, 40 6 M33 2 l7 4 -6 6" stroke="rgba(255,255,255,.6)" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Go on, drag the slider. This is the real panel, just in a web page.
+      </div>
+    </div>
+  </main>
+</div>
+
+<section id="features">
+  <div class="wrap">
+    <p class="kicker">WHAT'S IN IT</p>
+    <h2>One menu bar icon.<br>Quite a lot behind it.</h2>
+    <p class="intro">Boost is the headline, but once you're routing your Mac's sound through something, you may as well fix the rest of it too. Here's everything Amplify does.</p>
+
+    <div class="feature">
+      <div>
+        <p class="kicker">01 / PER-APP MIXER</p>
+        <h3>Every app gets its own volume knob.</h3>
+        <p>macOS gives you one slider for everything. Amplify gives each app its own, from 0% (muted) up to 300%.</p>
+        <p>Turn the browser up to hear a quiet lecture. Turn Slack down so the knock-knock doesn't make you jump. Leave Music alone.</p>
+        <p class="note">Try the sliders. The ↺ button in the real app puts an app back to 100%.</p>
+      </div>
+      <div class="card" id="mixer"></div>
+    </div>
+
+    <div class="feature flip">
+      <div>
+        <p class="kicker">02 / EFFECTS</p>
+        <h3>Seven effects. Each one is a single switch.</h3>
+        <p>No plug-in chains, no knobs labelled "Q". Turn on what helps, leave the rest off.</p>
+        <p>Loudness is the one most people keep on. It makes things sound louder than plain boost with less distortion, which is exactly what you want on laptop speakers.</p>
+      </div>
+      <div class="card">
+        <ul class="fx" id="fx"></ul>
+      </div>
+    </div>
+
+    <div class="feature">
+      <div>
+        <p class="kicker">03 / EQUALIZER</p>
+        <h3>A 10-band EQ, from 32&nbsp;Hz to 16&nbsp;kHz.</h3>
+        <p>Pick a preset or drag the bands into your own curve. Each band goes ±12 dB.</p>
+        <p>Bass Boost does what it says. Vocal pulls voices forward. Loudness Curve is the classic smile shape that makes small speakers sound bigger at low volume.</p>
+        <p class="note">Presets are real. Those are the exact curves the app uses.</p>
+      </div>
+      <div class="card">
+        <div class="eq-tabs" id="eqTabs"></div>
+        <div class="eq-db" id="eqDb"></div>
+        <div class="eq" id="eq"></div>
+        <div class="eq-labels"><span>32</span><span>64</span><span>125</span><span>250</span><span>500</span><span>1k</span><span>2k</span><span>4k</span><span>8k</span><span>16k</span></div>
+      </div>
+    </div>
+
+    <div class="smalls">
+      <div class="small"><span class="n">04</span><h4>Volume keys go past 100%</h4><p>Already at full volume? Keep pressing <kbd>F12</kbd>. Amplify picks up where macOS stops, with its own on-screen level display.</p></div>
+      <div class="small"><span class="n">05</span><h4>Remembers each output</h4><p>Speakers, headphones and AirPods each keep their own boost. New headphones always start at a safe 100%.</p></div>
+      <div class="small"><span class="n">06</span><h4>Built-in limiter</h4><p>Peaks get held just under full scale, so cranking it to 300% doesn't turn into harsh clipping.</p></div>
+      <div class="small"><span class="n">07</span><h4>Live level meters</h4><p>See what's coming in, what's going out, and how hard the limiter is working right now.</p></div>
+      <div class="small"><span class="n">08</span><h4>Scroll on the icon</h4><p>Scroll over the menu bar icon to change boost in 5% steps. Right-click to turn it on or off. No panel needed.</p></div>
+      <div class="small"><span class="n">09</span><h4>No drivers, no virtual device</h4><p>Amplify uses Apple's own Core Audio process taps. Nothing gets installed into your system.</p></div>
+      <div class="small"><span class="n">10</span><h4>Safe if it quits</h4><p>If Amplify quits or crashes, your Mac's audio goes straight back to normal. You never end up with no sound.</p></div>
+      <div class="small"><span class="n">11</span><h4>Open at login</h4><p>Set it once and forget it's there. It sits in the menu bar and stays out of the Dock.</p></div>
+      <div class="small"><span class="n">12</span><h4>Native, and small</h4><p>Written in Swift for Apple Silicon and Intel. The audio thread never waits on a lock or allocates memory.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="wrap price-wrap">
+    <div>
+      <p class="kicker">PRICING</p>
+      <h2>Pay once.<br>Keep it.</h2>
+      <p class="intro">No subscription. Volume shouldn't be a monthly bill.</p>
+      <ol class="steps">
+        <li><b>Download and use everything for 7 days.</b><span>Every feature is on during the trial. No card, no sign-up.</span></li>
+        <li><b>Decide if you'd miss it.</b><span>If your speakers sound fine without it, just drag it to the Bin.</span></li>
+        <li><b>Buy a license and paste in the key.</b><span>It's yours from then on.</span></li>
+      </ol>
+    </div>
+
+    <div class="ticket">
+      <div class="price"><sup>$</sup><span id="priceBig">12</span></div>
+      <div class="price-sub">one time. <b>7-day free trial</b> first.</div>
+      <div class="perf"></div>
+      <ul>
+        <li>Boost up to 300%, system-wide</li>
+        <li>Per-app mixer, all seven effects and the 10-band EQ</li>
+        <li>Volume keys past 100%</li>
+        <li>All future 2.x updates</li>
+        <li>No subscription, no account</li>
+      </ul>
+      <a class="btn btn-pink" href="#" data-buy><span>Buy Amplify for <span class="price-text">$12</span></span></a>
+      <a class="alt" href="#" data-download>or download the free trial</a>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <p class="kicker">FAQ</p>
+    <h2>Questions people ask</h2>
+    <div class="faq">
+      <details>
+        <summary>What happens when the 7 days are up?</summary>
+        <p>The boost switches off and Amplify asks for a license key. Your settings, EQ curve and per-app levels stay where you left them, so buying picks up right where the trial ended.</p>
+      </details>
+      <details>
+        <summary>Will it damage my speakers?</summary>
+        <p>The limiter stops digital clipping, but it can't make tiny speakers bigger. Already-loud music at 300% will sound strained on a MacBook. Boost works best on things that were too quiet to begin with, like calls, lectures, podcasts and badly mixed videos. Use your ears.</p>
+      </details>
+      <details>
+        <summary>Why does it ask for "System Audio Recording" permission?</summary>
+        <p>To make your Mac's audio louder, Amplify has to read it first. That's the permission macOS uses for it. Nothing is recorded to disk and nothing is sent anywhere.</p>
+      </details>
+      <details>
+        <summary>Does it work with AirPods, headphones and external speakers?</summary>
+        <p>Yes. It boosts whatever your Mac is currently playing through, and remembers a separate level for each one. One thing to know is that while Amplify is on, all audio goes to your current default output, even from apps set to use a different one.</p>
+      </details>
+      <details>
+        <summary>Why macOS 14.2 or later?</summary>
+        <p>Amplify is built on Core Audio process taps, which Apple added in macOS 14.2. That's what lets it work without a kernel extension or a virtual audio device.</p>
+      </details>
+      <details>
+        <summary>Is there any delay?</summary>
+        <p>A few milliseconds. You won't notice it in videos or calls. Changing an app's own level also causes a short blip while Amplify rebuilds its capture.</p>
+      </details>
+      <details>
+        <summary>Can I install it with Homebrew?</summary>
+        <p>Yes. Run <code>brew install --cask rishikeshsreekumar/tap/amplify</code> and the trial starts the first time you open it.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>Amplify 2.0. Made by Rishikesh Sreekumar.</span>
+    <span><a href="https://github.com/RishikeshSreekumar/amplify">GitHub</a> &nbsp;·&nbsp; <a href="https://github.com/RishikeshSreekumar/amplify/releases">Release notes</a></span>
+  </div>
+</footer>
+
+<script>
+  // Edit these three when the checkout is set up.
+  const PRICE = 12;
+  const CHECKOUT_URL = "#pricing";
+  const DOWNLOAD_URL = "https://github.com/RishikeshSreekumar/amplify/releases/latest";
+
+  document.querySelectorAll(".price-text").forEach(el => el.textContent = "$" + PRICE);
+  document.getElementById("priceBig").textContent = PRICE;
+  document.querySelectorAll("[data-buy]").forEach(a => a.href = CHECKOUT_URL);
+  document.querySelectorAll("[data-download]").forEach(a => a.href = DOWNLOAD_URL);
+
+  // Clock in the fake menu bar
+  (function () {
+    const d = new Date();
+    const day = d.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" });
+    const t = d.toLocaleTimeString("en-GB", { hour: "numeric", minute: "2-digit" });
+    document.getElementById("clock").textContent = day.replace(",", "") + " " + t;
+  })();
+
+  // Hero panel
+  const boost = document.getElementById("boost");
+  const power = document.getElementById("power");
+  const presetBtns = [...document.querySelectorAll("#presets button")];
+  let on = true;
+
+  function renderBoost() {
+    const v = +boost.value;
+    boost.style.setProperty("--p", ((v - 100) / 200 * 100) + "%");
+    document.getElementById("pct").textContent = v + "%";
+    document.getElementById("mbPct").textContent = on ? v + "%" : "";
+    document.getElementById("mbAmp").classList.toggle("off", !on);
+    presetBtns.forEach(b => b.classList.toggle("on", on && parseInt(b.textContent) === v));
+  }
+  boost.addEventListener("input", renderBoost);
+  presetBtns.forEach(b => b.addEventListener("click", () => {
+    boost.value = parseInt(b.textContent);
+    if (!on) togglePower();
+    renderBoost();
+  }));
+  function togglePower() {
+    on = !on;
+    power.setAttribute("aria-checked", on);
+    renderBoost();
+  }
+  power.addEventListener("click", togglePower);
+  renderBoost();
+
+  // Meters: fake programme audio, louder with boost, held under the ceiling.
+  const mIn = document.getElementById("mIn"), mOut = document.getElementById("mOut"), lim = document.getElementById("limText");
+  let env = .35, t = 0;
+  const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function tick() {
+    t += 1;
+    const target = .22 + .18 * Math.sin(t / 23) + .12 * Math.sin(t / 7.3) + Math.random() * .14;
+    env += (target - env) * .35;
+    const gain = on ? +boost.value / 100 : 1;
+    const raw = env * gain;
+    const out = Math.min(raw, .93);
+    const gr = raw > .93 ? 20 * Math.log10(raw / .93) : 0;
+    mIn.style.width = (env * 100) + "%";
+    mOut.style.width = (out * 100) + "%";
+    lim.textContent = "-" + gr.toFixed(1) + " dB";
+  }
+  tick();
+  if (!still) setInterval(tick, 90);
+
+  // Mixer
+  const apps = [
+    { n: "Chrome", c: "#e9a23b", v: 200 },
+    { n: "Zoom", c: "#2d8cff", v: 140 },
+    { n: "Slack", c: "#6f2a6e", v: 50 },
+    { n: "Music", c: "#fc3c5f", v: 100 },
+    { n: "Spotify", c: "#1fae55", v: 0 },
+  ];
+  const mixer = document.getElementById("mixer");
+  apps.forEach(a => {
+    const row = document.createElement("div");
+    row.className = "mix-row";
+    row.innerHTML = `<div class="app-ic" style="background:${a.c}">${a.n[0]}</div>
+      <div class="name">${a.n}</div>
+      <input class="range" type="range" min="0" max="300" step="5" value="${a.v}" aria-label="${a.n} level">
+      <output></output>`;
+    const r = row.querySelector("input"), o = row.querySelector("output");
+    const draw = () => {
+      const v = +r.value;
+      r.style.setProperty("--p", (v / 3) + "%");
+      o.textContent = v === 0 ? "Muted" : v + "%";
+      o.className = v > 100 ? "hot" : v === 0 ? "mute" : "";
+    };
+    r.addEventListener("input", draw); draw();
+    mixer.appendChild(row);
+  });
+
+  // Effects
+  const fx = [
+    ["Loudness", "Quiet parts come up, loud parts get held back. Great for films.", true],
+    ["Voice Clarity", "Cuts low rumble and lifts the 3 kHz range where speech sits.", true],
+    ["Auto-Level", "Evens out jumps between videos, ads and apps.", false],
+    ["Virtual Bass", "Adds harmonics your ear hears as bass, for speakers that can't go low.", false],
+    ["Mono", "Same sound in both ears. Handy with one AirPod in.", false],
+    ["Width", "Narrows or widens the stereo image.", false],
+    ["Balance", "Shifts sound to the left or right.", false],
+  ];
+  const fxList = document.getElementById("fx");
+  fx.forEach(([name, desc, isOn]) => {
+    const li = document.createElement("li");
+    li.innerHTML = `<b>${name}</b><span>${desc}</span><button class="switch sm" role="switch" aria-checked="${isOn}" aria-label="${name}"></button>`;
+    const s = li.querySelector("button");
+    s.addEventListener("click", () => s.setAttribute("aria-checked", s.getAttribute("aria-checked") !== "true"));
+    fxList.appendChild(li);
+  });
+
+  // Equalizer, using the app's own preset curves
+  const presets = {
+    "Flat": [0,0,0,0,0,0,0,0,0,0],
+    "Bass Boost": [6,5,4,2,0,0,0,0,0,0],
+    "Treble Boost": [0,0,0,0,0,0,1,3,5,6],
+    "Vocal": [-3,-2,-1,0,2,4,4,3,1,0],
+    "Loudness Curve": [5,4,2,0,-1,-1,0,2,4,5],
+  };
+  let gains = presets["Loudness Curve"].slice();
+  const eq = document.getElementById("eq"), eqDb = document.getElementById("eqDb"), eqTabs = document.getElementById("eqTabs");
+  const bands = gains.map((_, i) => {
+    const b = document.createElement("div");
+    b.className = "band";
+    b.innerHTML = '<div class="stem"></div><div class="knob"></div>';
+    eq.appendChild(b);
+    const db = document.createElement("span");
+    eqDb.appendChild(db);
+    b.addEventListener("pointerdown", e => {
+      b.setPointerCapture(e.pointerId);
+      b.classList.add("drag");
+      const move = ev => {
+        const r = b.getBoundingClientRect();
+        const y = Math.min(Math.max((ev.clientY - r.top) / r.height, 0), 1);
+        gains[i] = Math.round((0.5 - y) * 24);
+        setActive("Custom");
+        drawEq();
+      };
+      move(e);
+      b.onpointermove = move;
+      b.onpointerup = () => { b.onpointermove = null; b.classList.remove("drag"); };
+    });
+    return { b, db };
+  });
+  const tabNames = [...Object.keys(presets), "Custom"];
+  tabNames.forEach(n => {
+    const btn = document.createElement("button");
+    btn.textContent = n;
+    btn.addEventListener("click", () => {
+      if (presets[n]) gains = presets[n].slice();
+      setActive(n); drawEq();
+    });
+    eqTabs.appendChild(btn);
+  });
+  function setActive(n) { [...eqTabs.children].forEach(b => b.classList.toggle("on", b.textContent === n)); }
+  function drawEq() {
+    bands.forEach(({ b, db }, i) => {
+      const g = gains[i];
+      const knob = 50 - g / 12 * 50;
+      const stem = b.querySelector(".stem");
+      stem.style.top = Math.min(knob, 50) + "%";
+      stem.style.height = Math.abs(50 - knob) + "%";
+      stem.style.background = g < 0 ? "var(--ink-2)" : "var(--pink)";
+      b.querySelector(".knob").style.top = knob + "%";
+      db.textContent = (g > 0 ? "+" : "") + g;
+    });
+  }
+  setActive("Loudness Curve");
+  drawEq();
+</script>
+</body>
+</html>
