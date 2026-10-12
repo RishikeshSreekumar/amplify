@@ -1,11 +1,11 @@
 #!/bin/sh
 # Builds release artifacts (zip for Homebrew, dmg for manual install) and updates
 # the cask's version + sha256.
-# Usage: VERSION=1.0 ./package.sh
+# Usage: VERSION=2.0 ./package.sh
 set -e
 cd "$(dirname "$0")"
 
-VERSION="${VERSION:-1.0}"
+VERSION="${VERSION:-2.0}"
 export VERSION
 ./build.sh
 

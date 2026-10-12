@@ -1,3 +1,4 @@
 Amplify.app/
 dist/
 .DS_Store
+tests/.build/

@@ -4,11 +4,11 @@ set -e
 cd "$(dirname "$0")"
 
 APP="Amplify.app"
-SOURCES="main.swift AudioBooster.swift"
+SOURCES="Sources/*.swift"
 rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 
-VERSION="${VERSION:-1.0}"
+VERSION="${VERSION:-2.0}"
 
 # Universal binary: Apple Silicon + Intel. Process taps need macOS 14.2.
 BUILD="$(mktemp -d)"

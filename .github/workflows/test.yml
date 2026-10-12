@@ -1,0 +1,15 @@
+name: Test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: DSP tests
+        run: tests/run.sh dsp
+      - name: Build universal app
+        run: ./build.sh

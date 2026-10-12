@@ -18,12 +18,14 @@ The first time you turn boost on, allow **System Audio Recording** when macOS as
 
 Needs macOS 14.2 or later. Runs natively on Apple Silicon and Intel.
 
-## What's in it
+## What's new in 2.0
 
-- Boost all system audio from 100% to 300% from the menu bar
-- Live slider plus presets (125%, 150%, 200%, 250%, 300%)
-- Peak limiter to avoid harsh clipping
-- Follows your default output device (headphones, AirPods, displays)
-- No drivers or kernel extensions: uses Core Audio process taps
-- Audio returns to normal instantly if the app quits or crashes
-- Open at Login
+- **New panel.** Click the menu bar icon for live level meters, boost, effects, equalizer, per-app levels and settings.
+- **Sound effects:** Loudness (compressor), Voice Clarity, Auto-Level, Virtual Bass, Mono, stereo Width and Balance.
+- **10-band equalizer** with Bass Boost, Treble Boost, Vocal and Loudness Curve presets, or your own curve.
+- **Per-app mixer.** Give any app its own level from 0% (muted) to 300%.
+- **Volume keys past 100%.** At full volume, Volume Up raises the boost, with an on-screen level display. Turn it on in Settings (needs Accessibility permission).
+- **Remembers each output.** Speakers, headphones and AirPods keep their own boost; new headphones start at 100%.
+- **Scroll** over the menu bar icon to change the boost; **right-click** to turn Amplify on or off.
+
+After updating, macOS may ask for System Audio Recording permission again, because the app isn't notarized.
